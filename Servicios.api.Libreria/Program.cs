@@ -23,9 +23,20 @@ builder.Services.Configure<MongoSettings>(
 builder.Services.AddSingleton<MongoSettings>();
 builder.Services.AddTransient<IAutorContext,AutorContext>();
 builder.Services.AddTransient<IAutorRepository, AutorRepository>();
+builder.Services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
+
+builder.Services.AddCors(opt => {
+    opt.AddPolicy("CorsRule", rule =>
+    {
+        rule.AllowAnyHeader().AllowAnyMethod().WithOrigins("*");
+    });
+
+});
 
 var app = builder.Build();
 
+
+app.UseCors("CorsRule");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
